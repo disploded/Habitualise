@@ -1,0 +1,32 @@
+# --- Dependencies ---
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log*
+
+# --- Electron Build Output ---
+dist/
+release/
+out/
+*.vsix
+*.asar
+
+# --- Configuration & Secrets ---
+.env
+config.json
+# (If you want users to have their own personal local data, 
+# keep the config out of the repo)
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

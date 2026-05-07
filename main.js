@@ -1,8 +1,27 @@
-const { app, BrowserWindow, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, screen, ipcMain, Notification } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
 
 const store = new Store.default();
+
+let resetTimer;
+
+function startTaskTimer() {
+    if (resetTimer) clearInterval(resetTimer);
+
+    const minutes = store.get('resetInterval') || 60;
+    const ms = minutes * 60000;
+
+    resetTimer = setInterval(() => {
+        const tasks = store.get('tasks') || [];
+        const resetTasks = tasks.map(t => ({...t, done: false}));
+        store.set('tasks', resetTasks);
+
+        new Notification({title: "Habitualise", body: "Tasks reset!"}).show();
+
+        BrowserWindow.getAllWindows().forEach(win => win.reload());
+    }, ms)
+}
 
 ipcMain.handle('get-tasks', () => {
     const savedTasks = store.get('tasks');
@@ -17,14 +36,32 @@ ipcMain.handle('get-tasks', () => {
     return savedTasks;
 });
 
+ipcMain.handle('get-interval', () => store.get('resetInterval'));
+ipcMain.on('save-setting', (event, data) => {
+    store.set(data.key, data.value)
+    
+    if (data.key === 'resetInterval') {
+        startTaskTimer();
+    }
+})
+
 ipcMain.handle('save-tasks', (event, newTasks) => {
     store.set('tasks', newTasks);
     return { success: true }
 })
 
+ipcMain.on('update-timer', () => {
+    startTaskTimer();
+});
+
 ipcMain.on('change-page', (event, pageName) => {
     const win = BrowserWindow.fromWebContents(event.sender);
     win.loadFile(pageName)
+})
+
+ipcMain.on('minimize-app', (event) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    win.minimize();
 })
 
 ipcMain.on('quit-app', () => {
@@ -38,8 +75,8 @@ try {
 const createWindow = () => {
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
-    const windowWidth = 350;
-    const windowHeight = 400;
+    const windowWidth = 400;
+    const windowHeight = 500;
 
     const win = new BrowserWindow({
         width: windowWidth,
@@ -64,5 +101,12 @@ const createWindow = () => {
 
 
 app.whenReady().then(() => {
-    createWindow()
+    createWindow();
+    startTaskTimer();
+
+    // startup 
+    app.setLoginItemSettings({
+        openAtLogin: true,
+        path: app.getPath('exe'),
+    })
 })

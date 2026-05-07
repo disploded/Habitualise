@@ -14,6 +14,14 @@
         <button id="add-btn">Add Task</button>
     </div>
 
+    <div class="settings-card">
+        <label for="interval-input">Reset Every</label>
+        <div class="input-group">
+            <input type="number" id="interval-input" min="1" value="60">
+            <span>minutes</span>
+        </div>
+    </div>
+
     <div id="tasks">
         <table id="task-table">
         </table>
@@ -23,8 +31,14 @@
         let localTasks = [];
 
         async function init() {
+            await loadSettings();
             localTasks = await window.api.getTasks();
             renderEditTasks();
+        }
+
+        async function loadSettings() {
+            const interval = await window.api.getInterval() || 60;
+            document.getElementById('interval-input').value = interval;
         }
 
         function renderEditTasks() {
@@ -34,34 +48,52 @@
             localTasks.forEach((item, index) => {
                 const row = document.createElement("tr");
                 const cell = document.createElement("td");
+                cell.style.display = "flex";
+                cell.style.alignItems = "center";
 
                 const input = document.createElement("input");
                 input.type = "text";
                 input.value = item.task;
                 input.className = "edit-input";
+                input.style.flex = "1";
 
                 input.addEventListener('input', (e) => {
                     localTasks[index].task = e.target.value;
                 });
 
+                const removeBtn = document.createElement("button");
+                removeBtn.textContent = "×";
+                removeBtn.style.padding = "2px 10px";
+                removeBtn.style.marginLeft = "10px";
+                removeBtn.style.backgroundColor = "#ff4d4d";
+
+                removeBtn.onclick = () => {
+                    localTasks.splice(index, 1);
+                    renderEditTasks();
+                };
+
                 cell.appendChild(input);
+                cell.appendChild(removeBtn);
                 row.appendChild(cell);
                 table.appendChild(row);
             });
         }
 
+        // Add Task Button
         document.getElementById('add-btn').addEventListener('click', () => {
             localTasks.push({ task: '', done: false });
             renderEditTasks();
         });
 
-        // Save and go back
+        // Save and Exit Button
         document.getElementById('save-btn').addEventListener('click', async () => {
-            // Remove empty tasks before saving
             const filteredTasks = localTasks.filter(t => t.task.trim() !== "");
 
             await window.api.saveTasks(filteredTasks);
-            
+
+            const newInterval = document.getElementById('interval-input').value;
+            await window.api.saveInterval(newInterval);
+
             window.api.changePage('index.html');
         });
 

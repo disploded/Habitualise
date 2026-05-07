@@ -1,4 +1,5 @@
 Habitualise
+
 Hourly habit tracking that resets itself.
 
 Habitualise is a lightweight desktop app designed to help you build consistency by resetting your task list every hour. 

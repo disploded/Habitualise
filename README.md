@@ -1,4 +1,4 @@
-Habitualise
+# Habitualise
 
 Hourly habit tracking that resets itself.
 

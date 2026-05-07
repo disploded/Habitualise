@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Tasks</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Edit Tasks</h1>
+
+    <div id="button-container">
+        <button id="save-btn">Save & Exit</button>
+        <button id="add-btn">Add Task</button>
+    </div>
+
+    <div id="tasks">
+        <table id="task-table">
+        </table>
+    </div>
+
+    <script>
+        let localTasks = [];
+
+        async function init() {
+            localTasks = await window.api.getTasks();
+            renderEditTasks();
+        }
+
+        function renderEditTasks() {
+            const table = document.getElementById("task-table");
+            table.innerHTML = "";
+
+            localTasks.forEach((item, index) => {
+                const row = document.createElement("tr");
+                const cell = document.createElement("td");
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = item.task;
+                input.className = "edit-input";
+
+                input.addEventListener('input', (e) => {
+                    localTasks[index].task = e.target.value;
+                });
+
+                cell.appendChild(input);
+                row.appendChild(cell);
+                table.appendChild(row);
+            });
+        }
+
+        document.getElementById('add-btn').addEventListener('click', () => {
+            localTasks.push({ task: '', done: false });
+            renderEditTasks();
+        });
+
+        // Save and go back
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            // Remove empty tasks before saving
+            const filteredTasks = localTasks.filter(t => t.task.trim() !== "");
+
+            await window.api.saveTasks(filteredTasks);
+            
+            window.api.changePage('index.html');
+        });
+
+        init();
+    </script>
+</body>
+</html>

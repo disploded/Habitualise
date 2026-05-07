@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habitualise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Habitualise</h1>
+
+    <div id="button-container">
+        <button id="edit">Edit</button>
+        <button id="forceQuit">Force Quit</button>
+    </div>
+
+    <div id="tasks">
+        <table id="task-table">
+            <tr>
+                <td>Task 1</td>
+                <td>Task 2</td>
+                <td>Task 3</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
+
+<script>
+    async function init() {
+        // Wait for the main process to send the tasks
+        const tasks = await window.api.getTasks();
+        renderTasks(tasks);
+    }
+
+    function renderTasks(tasks) {
+        const table = document.getElementById("task-table");
+        table.innerHTML = "";
+
+        tasks.forEach(item => {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.textContent = item.task;
+            row.appendChild(cell);
+            table.appendChild(row);
+        });
+    }
+
+    function addTask() {
+        console.log("Add")
+    }
+
+    function removeTask() {
+        console.log("Remove")
+    }
+
+    function editTask() {
+        console.log("Edit")
+    }
+
+    init();
+</script>

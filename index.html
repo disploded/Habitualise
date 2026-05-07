@@ -10,6 +10,7 @@
     <h1>Habitualise</h1>
 
     <div id="button-container">
+        <button id="minimize">Hide</button>
         <button id="edit">Edit</button>
         <button id="forceQuit">Force Quit</button>
     </div>
@@ -63,11 +64,16 @@
         });
     }
 
+    const minimizeBtn = document.getElementById('minimize');
+    minimizeBtn.addEventListener('click', () => {
+        window.api.minimizeApp();
+    })
+
     const editBtn = document.getElementById('edit')
     editBtn.addEventListener('click', () => {
         window.api.changePage('edit.html');
     })
-
+    
     const quitBtn = document.getElementById('forceQuit')
     quitBtn.addEventListener('click', () => {
         window.api.quitApp();

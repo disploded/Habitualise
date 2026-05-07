@@ -1,7 +1,6 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
-const { Browser } = require('puppeteer');
 
 const store = new Store.default();
 

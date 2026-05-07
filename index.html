@@ -16,11 +16,7 @@
 
     <div id="tasks">
         <table id="task-table">
-            <tr>
-                <td>Task 1</td>
-                <td>Task 2</td>
-                <td>Task 3</td>
-            </tr>
+
         </table>
     </div>
 </body>
@@ -40,23 +36,42 @@
         tasks.forEach(item => {
             const row = document.createElement("tr");
             const cell = document.createElement("td");
-            cell.textContent = item.task;
+
+            // span for styling
+            const textSpan = document.createElement("span");
+            textSpan.textContent = item.task;
+            if (item.done) textSpan.classList.add("completed");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    textSpan.classList.add("completed");
+                    item.done = true;
+                } else {
+                    textSpan.classList.remove("completed");
+                    item.done = false;
+                }
+            });
+
+            cell.appendChild(textSpan);
+            cell.appendChild(checkbox);
+
             row.appendChild(cell);
             table.appendChild(row);
         });
     }
 
-    function addTask() {
-        console.log("Add")
-    }
+    const editBtn = document.getElementById('edit')
+    editBtn.addEventListener('click', () => {
+        window.api.changePage('edit.html');
+    })
 
-    function removeTask() {
-        console.log("Remove")
-    }
-
-    function editTask() {
-        console.log("Edit")
-    }
+    const quitBtn = document.getElementById('forceQuit')
+    quitBtn.addEventListener('click', () => {
+        window.api.quitApp();
+    })
 
     init();
 </script>

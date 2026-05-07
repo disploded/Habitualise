@@ -1,6 +1,7 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 const Store = require('electron-store');
+const { Browser } = require('puppeteer');
 
 const store = new Store.default();
 
@@ -16,6 +17,20 @@ ipcMain.handle('get-tasks', () => {
     
     return savedTasks;
 });
+
+ipcMain.handle('save-tasks', (event, newTasks) => {
+    store.set('tasks', newTasks);
+    return { success: true }
+})
+
+ipcMain.on('change-page', (event, pageName) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    win.loadFile(pageName)
+})
+
+ipcMain.on('quit-app', () => {
+    app.quit();
+})
 
 try {
   require('electron-reloader')(module);
@@ -47,6 +62,7 @@ const createWindow = () => {
 
     win.loadFile('index.html');
 }
+
 
 app.whenReady().then(() => {
     createWindow()

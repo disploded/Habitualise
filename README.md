@@ -40,7 +40,7 @@ Traditional to-do lists grow indefinitely, leading to "productivity debt." **Hab
 If you want to tweak the logic or contribute:
 ```bash
 # Clone the project
-git clone [https://github.com/disploded/Habitualise.git](https://github.com/disploded/Habitualise.git)
+git clone https://github.com/disploded/Habitualise.git
 
 # Install dependencies
 npm install
